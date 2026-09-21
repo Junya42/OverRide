@@ -369,6 +369,19 @@ n  = 322424827
 
 `18` is a valid switch case (1-9 and 16-21). Holes `0` and `10-15` call `rand()` instead.
 
+### Simplification
+
+The code does:
+```sh
+diff = 0x1337d00d - n
+cipher[i] ^= diff
+
+#it is equal to "Congratulations!" ?
+```
+
+The only diff value thats works is 18 so we need to do
+`n = 0x1337d00d - 18 = 322424827`
+
 ### Exploit
 
 ```sh

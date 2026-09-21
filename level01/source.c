@@ -24,7 +24,7 @@ int main(void)
 
     puts("********* ADMIN LOGIN PROMPT *********");
     printf("Enter Username: ");
-    fgets(username, 256, stdin);
+    fgets(username, 256, stdin); //dat_wil
 
     result = verify_user_name();
     if (result != 0) {

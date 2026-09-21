@@ -81,8 +81,17 @@ int main(int argc, char **argv, char **envp)
         envp++;
     }
 
-    puts((char *)0x8048b38);
-    /* "----... Welcome to wil's crappy number storage service! ..." */
+    puts(
+    "----------------------------------------------------\n"
+    "  Welcome to wil's crappy number storage service!   \n"
+    "----------------------------------------------------\n"
+    " Commands:                                          \n"
+    "    store - store a number into the data storage    \n"
+    "    read  - read a number from the data storage     \n"
+    "    quit  - exit the program                        \n"
+    "----------------------------------------------------\n"
+    "   wil has reserved some storage :>                 \n"
+    "----------------------------------------------------\n");
 
     while (1) {
         printf("Input command: ");
